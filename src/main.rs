@@ -39,7 +39,7 @@ fn main() {
         match structured_command.command {
             Command::Echo => handle_echo_command(structured_command),
             Command::Exit=> break,
-            Command::UnknownCommand => println!("{}: command not found", command),
+            Command::UnknownCommand => println!("{}: command not found", command.trim()),
         }
     }
 }
