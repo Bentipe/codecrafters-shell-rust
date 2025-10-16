@@ -9,4 +9,11 @@ fn main() {
     // Wait for user input
     let mut command = String::new();
     io::stdin().read_line(&mut command).unwrap();
+
+    let clean_command = command.trim();
+
+    match clean_command {
+        default => println!("{}: command not found", clean_command),
+    }
+
 }
