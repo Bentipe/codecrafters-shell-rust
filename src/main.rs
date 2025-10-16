@@ -5,6 +5,7 @@ use std::io::{self, Write};
 enum Command {
     Exit,
     Echo,
+    Type,
     UnknownCommand
 }
 
@@ -19,6 +20,7 @@ impl Command {
         match command.as_str() {
             "exit" => Command::Exit,
             "echo" => Command::Echo,
+            "type" => Command::Type,
             _ => Command::UnknownCommand
         }
     }
@@ -39,6 +41,7 @@ fn main() {
         match structured_command.command {
             Command::Echo => handle_echo_command(structured_command),
             Command::Exit=> break,
+            Command::Type => handle_type_command(structured_command),
             Command::UnknownCommand => println!("{}: command not found", command.trim()),
         }
     }
@@ -54,6 +57,15 @@ fn get_the_structured_command(terminal_command: &String) -> ReceivedCommand {
     ReceivedCommand {
         command,
         arguments
+    }
+}
+
+fn handle_type_command(command: ReceivedCommand) {
+    let command_to_check = command.arguments[0].to_string();
+
+    match Command::from_string(command_to_check) {
+        Command::UnknownCommand => println!("{}: not found", command.arguments[0]),
+        _ => println!("{}: is a shell builtin", command.arguments[0])
     }
 }
 
