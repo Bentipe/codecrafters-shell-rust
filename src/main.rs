@@ -1,9 +1,11 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
 
+
+
 fn main() {
     // Uncomment this block to pass the first stage
-    while true {
+    loop {
         print!("$ ");
         io::stdout().flush().unwrap();
 
@@ -14,7 +16,8 @@ fn main() {
         let clean_command = command.trim();
 
         match clean_command {
-            default => println!("{}: command not found", clean_command),
+            "exit 0" => break,
+            _default => println!("{}: command not found", clean_command),
         }
     }
 }
