@@ -37,7 +37,7 @@ fn main() {
         let structured_command: ReceivedCommand = get_the_structured_command(&command);
 
         match structured_command.command {
-            Command::Echo => println!("Echo: {}", structured_command.arguments[0]),
+            Command::Echo => handle_echo_command(structured_command),
             Command::Exit=> break,
             Command::UnknownCommand => println!("{}: command not found", command),
         }
@@ -55,4 +55,8 @@ fn get_the_structured_command(terminal_command: &String) -> ReceivedCommand {
         command,
         arguments
     }
+}
+
+fn handle_echo_command(command: ReceivedCommand) {
+    println!("{}", command.arguments.join(" "))
 }
