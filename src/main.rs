@@ -65,7 +65,7 @@ fn handle_type_command(command: ReceivedCommand) {
 
     match Command::from_string(command_to_check) {
         Command::UnknownCommand => println!("{}: not found", command.arguments[0]),
-        _ => println!("{}: is a shell builtin", command.arguments[0])
+        _ => println!("{} is a shell builtin", command.arguments[0])
     }
 }
 
