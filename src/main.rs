@@ -1,3 +1,4 @@
+use std::env;
 #[allow(unused_imports)]
 use std::io::{self, Write};
 
@@ -63,9 +64,29 @@ fn get_the_structured_command(terminal_command: &String) -> ReceivedCommand {
 fn handle_type_command(command: ReceivedCommand) {
     let command_to_check = command.arguments[0].to_string();
 
+    // Take the env path
+    let env_path = env::var("PATH").unwrap();
+    let env_path_parts: Vec<&str> = env_path.split(":").collect();
+
     match Command::from_string(command_to_check) {
-        Command::UnknownCommand => println!("{}: not found", command.arguments[0]),
+        Command::UnknownCommand => search_for_command_in_path(command, env_path_parts),
         _ => println!("{} is a shell builtin", command.arguments[0])
+    }
+}
+
+fn search_for_command_in_path(command_to_search: ReceivedCommand, paths_to_search_in: Vec<&str>) {
+    let mut has_been_found = false;
+    // Search for the command in the path
+    for path in paths_to_search_in {
+        let full_path = format!("{}/{}", path, command_to_search.arguments[0]);
+        if std::path::Path::new(&full_path).exists() {
+            has_been_found = true;
+            println!("{} is {}", command_to_search.arguments[0], full_path);
+        }
+    }
+
+    if !has_been_found {
+        println!("{}: not found", command_to_search.arguments[0])
     }
 }
 
