@@ -79,6 +79,7 @@ fn search_for_command_in_path(command_to_search: ReceivedCommand) {
     for path in env_path_parts {
         let full_path = format!("{}/{}", path, command_to_search.arguments[0]);
         if std::path::Path::new(&full_path).exists() {
+            // We also have to check if we have permission to execute the file
             has_been_found = true;
             println!("{} is {}", command_to_search.arguments[0], full_path);
         }
