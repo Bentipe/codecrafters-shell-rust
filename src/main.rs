@@ -84,6 +84,7 @@ fn search_for_command_in_path(command_to_search: ReceivedCommand) {
 
             has_been_found = true;
             println!("{} is {}", command_to_search.arguments[0], full_path);
+            break;
         }
     }
 
