@@ -1,6 +1,7 @@
-use std::env;
+use std::{env, fs};
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::path::Path;
 
 #[derive(Debug, PartialEq)]
 enum Command {
@@ -78,8 +79,9 @@ fn search_for_command_in_path(command_to_search: ReceivedCommand) {
     // Search for the command in the path
     for path in env_path_parts {
         let full_path = format!("{}/{}", path, command_to_search.arguments[0]);
-        if std::path::Path::new(&full_path).exists() {
-            // We also have to check if we have permission to execute the file
+        if Path::new(&full_path).exists() && is_executable(Path::new(&full_path)).unwrap(){
+            // We have to check if its a command or a file
+
             has_been_found = true;
             println!("{} is {}", command_to_search.arguments[0], full_path);
         }
@@ -92,4 +94,14 @@ fn search_for_command_in_path(command_to_search: ReceivedCommand) {
 
 fn handle_echo_command(command: ReceivedCommand) {
     println!("{}", command.arguments.join(" "))
+}
+
+fn is_executable(path: &Path) -> std::io::Result<bool> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let metadata = fs::metadata(path)?;
+    let permissions = metadata.permissions();
+
+    // Check if any execute bit is set (owner, group, or other)
+    Ok(permissions.mode() & 0o111 != 0)
 }
