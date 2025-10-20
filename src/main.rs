@@ -9,6 +9,7 @@ enum ShellAvailableCommands {
     Exit,
     Echo,
     Type,
+    Pwd,
     UnknownCommand
 }
 
@@ -25,6 +26,7 @@ impl ShellAvailableCommands {
             "exit" => ShellAvailableCommands::Exit,
             "echo" => ShellAvailableCommands::Echo,
             "type" => ShellAvailableCommands::Type,
+            "pwd" => ShellAvailableCommands::Pwd,
             _ => ShellAvailableCommands::UnknownCommand
         }
     }
@@ -46,6 +48,7 @@ fn main() {
             ShellAvailableCommands::Echo => handle_echo_command(structured_command),
             ShellAvailableCommands::Exit=> break,
             ShellAvailableCommands::Type => handle_type_command(structured_command),
+            ShellAvailableCommands::Pwd => println!("{}", env::current_dir().unwrap().display()),
             ShellAvailableCommands::UnknownCommand => handle_unknown_command(structured_command),
         }
     }
