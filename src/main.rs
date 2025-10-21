@@ -10,6 +10,7 @@ enum ShellAvailableCommands {
     Echo,
     Type,
     Pwd,
+    Cd,
     UnknownCommand
 }
 
@@ -19,7 +20,6 @@ struct ReceivedCommand {
     raw_command: String
 }
 
-
 impl ShellAvailableCommands {
     fn from_string(command: String) -> Self {
         match command.as_str() {
@@ -27,6 +27,7 @@ impl ShellAvailableCommands {
             "echo" => ShellAvailableCommands::Echo,
             "type" => ShellAvailableCommands::Type,
             "pwd" => ShellAvailableCommands::Pwd,
+            "cd" => ShellAvailableCommands::Cd,
             _ => ShellAvailableCommands::UnknownCommand
         }
     }
@@ -49,8 +50,19 @@ fn main() {
             ShellAvailableCommands::Exit=> break,
             ShellAvailableCommands::Type => handle_type_command(structured_command),
             ShellAvailableCommands::Pwd => println!("{}", env::current_dir().unwrap().display()),
+            ShellAvailableCommands::Cd => handle_cd_command(structured_command),
             ShellAvailableCommands::UnknownCommand => handle_unknown_command(structured_command),
         }
+    }
+}
+
+fn handle_cd_command(command: ReceivedCommand) {
+    let new_directory = command.arguments[0].clone();
+    let new_directory_path = Path::new(&new_directory);
+    if new_directory_path.exists() && new_directory_path.is_dir() {
+        env::set_current_dir(new_directory_path).unwrap();
+    } else {
+        println!("cd: {}: No such file or directory", new_directory);
     }
 }
 
