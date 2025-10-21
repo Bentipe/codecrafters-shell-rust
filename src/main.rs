@@ -3,6 +3,7 @@ use std::{env, fs};
 use std::io::{self, Write};
 use std::path::Path;
 use std::process::Command;
+use shell_words::split;
 
 #[derive(Debug, PartialEq)]
 enum ShellAvailableCommands {
@@ -56,6 +57,22 @@ fn main() {
     }
 }
 
+fn get_the_structured_command(terminal_command: &String) -> ReceivedCommand {
+    // We use shell_words to split the command into parts
+    let command_parts: Vec<String> = split(terminal_command).unwrap();
+    let command: ShellAvailableCommands = ShellAvailableCommands::from_string(command_parts[0].clone());
+    let raw_command: String = command_parts[0].clone();
+    let arguments: Vec<String> = command_parts[1..]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    ReceivedCommand {
+        command,
+        arguments,
+        raw_command
+    }
+}
+
 fn handle_cd_command(command: ReceivedCommand) {
     let new_directory = substitute_home_for_home_path(command.arguments[0].clone());
     let new_directory_path = Path::new(&new_directory);
@@ -82,21 +99,6 @@ fn handle_unknown_command(command: ReceivedCommand) {
             .output()
             .unwrap();
         print!("{}", String::from_utf8_lossy(&output.stdout));
-    }
-}
-
-fn get_the_structured_command(terminal_command: &String) -> ReceivedCommand {
-    let command_parts: Vec<&str> = terminal_command.split_whitespace().collect();
-    let command: ShellAvailableCommands = ShellAvailableCommands::from_string(command_parts[0].to_string());
-    let raw_command: String = command_parts[0].to_string();
-    let arguments: Vec<String> = command_parts[1..]
-        .iter()
-        .map(|s| s.to_string())
-        .collect();
-    ReceivedCommand {
-        command,
-        arguments,
-        raw_command
     }
 }
 
