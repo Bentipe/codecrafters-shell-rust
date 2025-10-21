@@ -57,13 +57,18 @@ fn main() {
 }
 
 fn handle_cd_command(command: ReceivedCommand) {
-    let new_directory = command.arguments[0].clone();
+    let new_directory = substitute_home_for_home_path(command.arguments[0].clone());
     let new_directory_path = Path::new(&new_directory);
     if new_directory_path.exists() && new_directory_path.is_dir() {
         env::set_current_dir(new_directory_path).unwrap();
     } else {
         println!("cd: {}: No such file or directory", new_directory);
     }
+}
+
+fn substitute_home_for_home_path(path: String) -> String {
+    let home_path = env::var("HOME").unwrap();
+    path.replace("~", &home_path)
 }
 
 fn handle_unknown_command(command: ReceivedCommand) {
